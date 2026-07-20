@@ -1,5 +1,5 @@
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { formatCurrency } from '../data/mockData';
+import { formatCurrency } from '../../data/accounts';
 
 /**
  * StatCard — a premium dark metric card with a positive/negative trend chip.

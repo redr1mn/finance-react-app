@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
-import { formatCurrency } from '../data/mockData';
+import { formatCurrency } from '../../data/accounts';
 import StatusBadge from './StatusBadge';
 
 const categoryDot = {

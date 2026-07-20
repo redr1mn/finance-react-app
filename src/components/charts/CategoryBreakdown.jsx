@@ -6,7 +6,7 @@ import {
   PieChart,
   Pie,
 } from 'recharts';
-import { formatCurrency } from '../data/mockData';
+import { formatCurrency } from '../../data/accounts';
 
 // Solid color per category — kept in sync with RecentActivity dots.
 const CATEGORY_COLORS = {

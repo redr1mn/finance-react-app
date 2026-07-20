@@ -7,12 +7,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { formatCurrency } from '../data/mockData';
+import { formatCurrency } from '../../data/accounts';
 
 /**
- * MoneyUsageChart — emerald income area vs. rose spend line (with neon glow).
+ * SpendingChart — emerald income area vs. rose spend line (with neon glow).
  */
-export default function MoneyUsageChart({ data }) {
+export default function SpendingChart({ data }) {
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg shadow-black/20">
       <div className="mb-4 flex items-center justify-between">

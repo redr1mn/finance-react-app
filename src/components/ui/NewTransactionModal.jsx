@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { X, ArrowDownLeft, ArrowUpRight, ChevronDown, Check } from 'lucide-react';
-import { formatCurrency } from '../data/mockData';
+import { formatCurrency } from '../../data/accounts';
 
 const CATEGORIES = ['Groceries', 'Transport', 'Housing', 'Entertainment', 'Utilities', 'Transfer', 'Investment', 'Travel', 'Fees', 'Income'];
 

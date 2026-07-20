@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { Wallet, TrendingDown, ArrowRight, BarChart3, Plus } from 'lucide-react';
-import StatCard from './StatCard';
-import MoneyUsageChart from './MoneyUsageChart';
-import CategoryBreakdown from './CategoryBreakdown';
-import RecentActivity from './RecentActivity';
-import { formatCurrency } from '../data/mockData';
+import StatCard from '../ui/StatCard';
+import SpendingChart from '../charts/SpendingChart';
+import CategoryBreakdown from '../charts/CategoryBreakdown';
+import RecentActivity from '../ui/RecentActivity';
+import { formatCurrency } from '../../data/accounts';
 
 /**
  * DashboardHome — the "Home" view: stat cards, quick actions, charts, activity.
@@ -81,8 +81,8 @@ export default function DashboardHome({ account, accounts, onNavigate, onNewTran
 
       {/* Side-by-side Charts (2-Column Grid on Desktop) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" id="category-breakdown">
-        {/* Money usage chart */}
-        <MoneyUsageChart data={account.series} />
+        {/* Spending chart */}
+        <SpendingChart data={account.series} />
 
         {/* Category breakdown */}
         <CategoryBreakdown transactions={filteredTransactions} />

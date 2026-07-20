@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Search, Plus, ChevronDown, Check } from 'lucide-react';
-import StatusBadge from './StatusBadge';
-import { formatCurrency } from '../data/mockData';
+import StatusBadge from '../ui/StatusBadge';
+import { formatCurrency } from '../../data/accounts';
 
 const CATEGORIES = [
   'All',

@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Sparkles, Menu, X, ChevronDown, Check, Search, LayoutDashboard, CreditCard } from 'lucide-react';
 import Sidebar from './Sidebar';
-import DashboardHome from './DashboardHome';
-import PaymentsList from './PaymentsList';
-import NewTransactionModal from './NewTransactionModal';
-import { accounts as initialAccounts } from '../data/mockData';
+import DashboardHome from '../pages/DashboardHome';
+import PaymentsList from '../pages/PaymentsList';
+import NewTransactionModal from '../ui/NewTransactionModal';
+import { accounts as initialAccounts } from '../../data/accounts';
 
 export default function DashboardLayout() {
   const [collapsed, setCollapsed] = useState(false);

@@ -70,7 +70,7 @@ export default function CategoryBreakdown({ transactions }) {
           <div className="hidden md:flex lg:hidden xl:flex flex-col gap-2 flex-1 w-full max-w-[200px]">
             {leftData.map((item) => (
               <div key={item.category} className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950/30 p-2 transition hover:bg-zinc-950/70">
-                <span className="h-2 w-2 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: item.color }} />
+                <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
                 <span className="truncate text-[11px] font-semibold text-zinc-400">{item.category}</span>
                 <span className="ml-auto text-[10px] font-bold text-zinc-200 tabular-nums">
                   {totalSpent > 0 ? `${((item.amount / totalSpent) * 100).toFixed(1)}%` : '0%'}
@@ -128,7 +128,7 @@ export default function CategoryBreakdown({ transactions }) {
           <div className="hidden md:flex lg:hidden xl:flex flex-col gap-2 flex-1 w-full max-w-[200px]">
             {rightData.map((item) => (
               <div key={item.category} className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950/30 p-2 transition hover:bg-zinc-950/70">
-                <span className="h-2 w-2 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: item.color }} />
+                <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
                 <span className="truncate text-[11px] font-semibold text-zinc-400">{item.category}</span>
                 <span className="ml-auto text-[10px] font-bold text-zinc-200 tabular-nums">
                   {totalSpent > 0 ? `${((item.amount / totalSpent) * 100).toFixed(1)}%` : '0%'}

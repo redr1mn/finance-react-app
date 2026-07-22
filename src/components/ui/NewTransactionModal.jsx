@@ -15,25 +15,25 @@ function ModalSelect({ label, value, options, disabled, onChange }) {
 
   return (
     <div className={`relative w-full ${disabled ? 'opacity-50' : ''}`}>
-      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-void-500">
         {label}
       </span>
       <button
         type="button"
         disabled={disabled}
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between gap-2 rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2.5 text-sm font-semibold text-zinc-200 hover:bg-zinc-900 transition outline-none disabled:cursor-not-allowed cursor-pointer"
+        className="flex w-full items-center justify-between gap-2 rounded-lg border border-void-800 bg-void-950/60 px-3 py-2.5 text-sm font-semibold text-void-200 hover:bg-void-900 transition outline-none disabled:cursor-not-allowed cursor-pointer"
       >
         <span className="truncate">{activeLabel}</span>
         {!disabled && (
-          <ChevronDown size={14} className={`text-zinc-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+          <ChevronDown size={14} className={`text-void-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
         )}
       </button>
 
       {open && !disabled && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 right-0 mt-1.5 z-50 max-h-48 overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-900 p-1 shadow-2xl animate-fade-in custom-scrollbar">
+          <div className="absolute left-0 right-0 mt-1.5 z-50 max-h-48 overflow-y-auto rounded-lg border border-void-800 bg-void-900 p-1 shadow-2xl animate-fade-in custom-scrollbar">
             {options.map((opt) => {
               const selected = opt.value === value;
               return (
@@ -44,11 +44,11 @@ function ModalSelect({ label, value, options, disabled, onChange }) {
                     onChange(opt.value);
                     setOpen(false);
                   }}
-                  className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-xs font-semibold transition cursor-pointer ${selected ? 'text-indigo-400 bg-zinc-800/40' : 'text-zinc-300 hover:bg-zinc-800/70'
+                  className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-xs font-semibold transition cursor-pointer ${selected ? 'text-violet-400 bg-void-800/40' : 'text-void-300 hover:bg-void-800/70'
                     }`}
                 >
                   <span className="truncate">{opt.label}</span>
-                  {selected && <Check size={13} className="text-indigo-400 shrink-0" />}
+                  {selected && <Check size={13} className="text-violet-400 shrink-0" />}
                 </button>
               );
             })}
@@ -119,18 +119,18 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
 
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl shadow-black/60"
+        className="relative w-full max-w-md rounded-2xl border border-void-800 bg-void-900 shadow-2xl shadow-black/60"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4 rounded-t-2xl">
+        <div className="flex items-center justify-between border-b border-void-800 px-5 py-4 rounded-t-2xl">
           <div>
-            <h2 className="text-base font-bold text-zinc-50">New Transaction</h2>
-            <p className="text-xs font-medium text-zinc-500">Add an entry to this account</p>
+            <h2 className="text-base font-bold text-void-50">New Transaction</h2>
+            <p className="text-xs font-medium text-void-500">Add an entry to this account</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200 active:scale-95"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-void-400 transition hover:bg-void-800 hover:text-void-200 active:scale-95"
           >
             <X size={17} />
           </button>
@@ -139,13 +139,13 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
         {/* Body */}
         <div className="space-y-4 px-5 py-5">
           {/* Type toggle */}
-          <div className="grid grid-cols-2 gap-2 rounded-xl border border-zinc-800 bg-zinc-950/60 p-1">
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-void-800 bg-void-950/60 p-1">
             <button
               type="button"
               onClick={() => setType('expense')}
               className={`flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition ${type === 'expense'
                   ? 'bg-rose-500/15 text-rose-400 ring-1 ring-inset ring-rose-500/30'
-                  : 'text-zinc-400 hover:text-zinc-200'
+                  : 'text-void-400 hover:text-void-200'
                 }`}
             >
               <ArrowUpRight size={15} /> Expense
@@ -155,7 +155,7 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
               onClick={() => setType('income')}
               className={`flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition ${type === 'income'
                   ? 'bg-emerald-500/15 text-emerald-400 ring-1 ring-inset ring-emerald-500/30'
-                  : 'text-zinc-400 hover:text-zinc-200'
+                  : 'text-void-400 hover:text-void-200'
                 }`}
             >
               <ArrowDownLeft size={15} /> Income
@@ -164,11 +164,11 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
 
           {/* Amount */}
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-void-500">
               Amount
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-zinc-500">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-void-500">
                 $
               </span>
               <input
@@ -178,14 +178,14 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-950/60 py-2.5 pl-7 pr-3 text-sm font-semibold text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20"
+                className="w-full rounded-lg border border-void-800 bg-void-950/60 py-2.5 pl-7 pr-3 text-sm font-semibold text-void-200 placeholder:text-void-500 outline-none transition focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/20"
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-void-500">
               Description
             </label>
             <input
@@ -193,7 +193,7 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g. Coffee at Blue Bottle"
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2.5 text-sm font-medium text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-lg border border-void-800 bg-void-950/60 px-3 py-2.5 text-sm font-medium text-void-200 placeholder:text-void-500 outline-none transition focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/20"
             />
           </div>
 
@@ -207,21 +207,21 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
               onChange={setCategory}
             />
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-void-500">
                 Date
               </label>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2.5 text-sm font-medium text-zinc-100 outline-none transition focus:border-indigo-500/60 [color-scheme:dark]"
+                className="w-full rounded-lg border border-void-800 bg-void-950/60 px-3 py-2.5 text-sm font-medium text-void-200 outline-none transition focus:border-violet-500/60 [color-scheme:dark]"
               />
             </div>
           </div>
 
           {/* Status */}
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-void-500">
               Status
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -237,7 +237,7 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
                         ? isCompleted
                           ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400'
                           : 'border-amber-500/40 bg-amber-500/10 text-amber-400'
-                        : 'border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:text-zinc-200'
+                        : 'border-void-800 bg-void-950/60 text-void-400 hover:text-void-200'
                       }`}
                   >
                     {s}
@@ -255,18 +255,18 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
         </div>
 
         {/* Footer */}
-        <div className={`flex items-center justify-end gap-3 border-t border-zinc-800 px-5 py-4 ${valid ? '' : 'rounded-b-2xl'}`}>
+        <div className={`flex items-center justify-end gap-3 border-t border-void-800 px-5 py-4 ${valid ? '' : 'rounded-b-2xl'}`}>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-2 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-800 active:scale-95"
+            className="rounded-lg border border-void-800 bg-void-950/60 px-4 py-2 text-sm font-semibold text-void-300 transition hover:bg-void-800 active:scale-95"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={!valid}
-            className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:bg-violet-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Add Transaction
           </button>
@@ -274,7 +274,7 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
 
         {/* Preview hint */}
         {valid && (
-          <div className="border-t border-zinc-800 bg-zinc-950/40 px-5 py-3 text-center text-xs font-medium text-zinc-500 rounded-b-2xl">
+          <div className="border-t border-void-800 bg-void-950/40 px-5 py-3 text-center text-xs font-medium text-void-500 rounded-b-2xl">
             This will add{' '}
             <span className={type === 'income' ? 'text-emerald-400' : 'text-rose-400'}>
               {formatCurrency(

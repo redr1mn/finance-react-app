@@ -9,17 +9,19 @@ import {
 import { formatCurrency } from '../../data/accounts';
 
 // Solid color per category — kept in sync with RecentActivity dots.
+// Investment updated from indigo (#6366f1) to violet (#8b5cf6).
+// Transfer updated from zinc-400 to void-400 equivalent.
 const CATEGORY_COLORS = {
-  Income: '#10b981',
-  Groceries: '#0ea5e9',
-  Transport: '#f59e0b',
-  Housing: '#8b5cf6',
-  Entertainment: '#ec4899',
-  Utilities: '#14b8a6',
-  Transfer: '#a1a1aa',
-  Investment: '#6366f1',
-  Travel: '#06b6d4',
-  Fees: '#f43f5e',
+  Income: '#10b981', // emerald-500
+  Groceries: '#0ea5e9', // sky-500
+  Transport: '#f59e0b', // amber-500
+  Housing: '#8b5cf6', // violet-500
+  Entertainment: '#ec4899', // pink-500
+  Utilities: '#14b8a6', // teal-500
+  Transfer: '#b3a8cc', // void-400
+  Investment: '#8b5cf6', // violet-500
+  Travel: '#06b6d4', // cyan-500
+  Fees: '#f43f5e', // rose-500
 };
 
 /**
@@ -38,7 +40,7 @@ export default function CategoryBreakdown({ transactions }) {
       .map(([category, amount]) => ({
         category,
         amount: Math.round(amount * 100) / 100,
-        color: CATEGORY_COLORS[category] || '#71717a',
+        color: CATEGORY_COLORS[category] || '#7b6fa0',
       }))
       .sort((a, b) => b.amount - a.amount);
   }, [transactions]);
@@ -55,10 +57,10 @@ export default function CategoryBreakdown({ transactions }) {
   }, [data]);
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg shadow-black/20">
+    <div className="rounded-2xl border border-void-800 bg-void-900/80 p-5 shadow-lg shadow-black/20">
       <div className="mb-4">
-        <h3 className="text-base font-bold text-zinc-50 font-sans">Spending by Category</h3>
-        <p className="text-xs font-medium text-zinc-500">
+        <h3 className="text-base font-bold text-void-50 font-sans">Spending by Category</h3>
+        <p className="text-xs font-medium text-void-500">
           Monthly distribution
         </p>
       </div>
@@ -69,25 +71,25 @@ export default function CategoryBreakdown({ transactions }) {
           {/* Left Side Annotations */}
           <div className="hidden md:flex lg:hidden xl:flex flex-col gap-2 flex-1 w-full max-w-[200px]">
             {leftData.map((item) => (
-              <div key={item.category} className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950/30 p-2 transition hover:bg-zinc-950/70">
+              <div key={item.category} className="flex items-center gap-2 rounded-lg border border-void-800 bg-void-950/30 p-2 transition hover:bg-void-950/70">
                 <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                <span className="truncate text-[11px] font-semibold text-zinc-400">{item.category}</span>
-                <span className="ml-auto text-[10px] font-bold text-zinc-200 tabular-nums">
+                <span className="truncate text-[11px] font-semibold text-void-400">{item.category}</span>
+                <span className="ml-auto text-[10px] font-bold text-void-200 tabular-nums">
                   {totalSpent > 0 ? `${((item.amount / totalSpent) * 100).toFixed(1)}%` : '0%'}
                 </span>
               </div>
             ))}
-            {leftData.length === 0 && <div className="text-[11px] text-zinc-600">No data</div>}
+            {leftData.length === 0 && <div className="text-[11px] text-void-600">No data</div>}
           </div>
 
           {/* Center Pie Chart */}
           <div className="relative h-64 w-[240px] shrink-0 flex items-center justify-center">
             {/* Center Total Overlay inside the donut hole */}
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-void-500">
                 Total Spent
               </span>
-              <span className="text-xl font-extrabold text-zinc-50 font-sans tracking-tight">
+              <span className="text-xl font-extrabold text-void-50 font-sans tracking-tight">
                 {formatCurrency(totalSpent)}
               </span>
             </div>
@@ -105,19 +107,20 @@ export default function CategoryBreakdown({ transactions }) {
                   nameKey="category"
                 >
                   {data.map((entry) => (
-                    <Cell key={entry.category} fill={entry.color} stroke="#18181b" strokeWidth={2} />
+                    /* Stroke matches new body background: void-950 = #06040a */
+                    <Cell key={entry.category} fill={entry.color} stroke="#06040a" strokeWidth={2} />
                   ))}
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#18181b',
-                    border: '1px solid #27272a',
+                    backgroundColor: '#0d0b14',
+                    border: '1px solid #1e1a2e',
                     borderRadius: 12,
                   }}
-                  itemStyle={{ color: '#ffffff' }}
+                  itemStyle={{ color: '#f0eeff' }}
                   formatter={(value, name) => {
                     const pct = totalSpent > 0 ? ((value / totalSpent) * 100).toFixed(1) + '%' : '0%';
-                    return [`${formatCurrency(value)} (${pct})`, `${name} · spent`];
+                    return [`${formatCurrency(value)} (${pct})`, `${name} · Spent`];
                   }}
                 />
               </PieChart>
@@ -127,25 +130,25 @@ export default function CategoryBreakdown({ transactions }) {
           {/* Right Side Annotations */}
           <div className="hidden md:flex lg:hidden xl:flex flex-col gap-2 flex-1 w-full max-w-[200px]">
             {rightData.map((item) => (
-              <div key={item.category} className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950/30 p-2 transition hover:bg-zinc-950/70">
+              <div key={item.category} className="flex items-center gap-2 rounded-lg border border-void-800 bg-void-950/30 p-2 transition hover:bg-void-950/70">
                 <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                <span className="truncate text-[11px] font-semibold text-zinc-400">{item.category}</span>
-                <span className="ml-auto text-[10px] font-bold text-zinc-200 tabular-nums">
+                <span className="truncate text-[11px] font-semibold text-void-400">{item.category}</span>
+                <span className="ml-auto text-[10px] font-bold text-void-200 tabular-nums">
                   {totalSpent > 0 ? `${((item.amount / totalSpent) * 100).toFixed(1)}%` : '0%'}
                 </span>
               </div>
             ))}
-            {rightData.length === 0 && <div className="text-[11px] text-zinc-600">No data</div>}
+            {rightData.length === 0 && <div className="text-[11px] text-void-600">No data</div>}
           </div>
         </div>
 
         {/* Fallback Mobile / Cramped Desktop Legend */}
         <div className="flex flex-wrap gap-2 md:hidden lg:flex xl:hidden justify-center px-1">
           {data.map((item) => (
-            <div key={item.category} className="flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950/30 px-2 py-1">
+            <div key={item.category} className="flex items-center gap-1.5 rounded-lg border border-void-800 bg-void-950/30 px-2 py-1">
               <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-              <span className="text-[10px] font-semibold text-zinc-400">{item.category}</span>
-              <span className="text-[10px] font-bold text-zinc-200">
+              <span className="text-[10px] font-semibold text-void-400">{item.category}</span>
+              <span className="text-[10px] font-bold text-void-200">
                 {totalSpent > 0 ? `${((item.amount / totalSpent) * 100).toFixed(1)}%` : '0%'}
               </span>
             </div>

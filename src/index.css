@@ -3,11 +3,19 @@
 
 @theme {
   --font-sans: 'Montserrat', system-ui, sans-serif;
-  --color-brand-50: #eef2ff;
-  --color-brand-400: #818cf8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
+
+  /* Void scale — near-blacks with violet undertone */
+  --color-void-950: #06040a;
+  --color-void-900: #0d0b14;
+  --color-void-850: #13101e;
+  --color-void-800: #1e1a2e;
+  --color-void-700: #2d2845;
+  --color-void-600: #3d3660;
+  --color-void-500: #7b6fa0;
+  --color-void-400: #b3a8cc;
+  --color-void-300: #c9c0e0;
+  --color-void-200: #ddd6f3;
+  --color-void-50:  #f0eeff;
 }
 
 html,
@@ -19,8 +27,8 @@ body,
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background-color: #09090b;
-  color: #e4e4e7;
+  background-color: #06040a;
+  color: #ddd6f3;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -35,21 +43,21 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #1e1a2e;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #2d2845;
 }
 
 /* Recharts tooltip dark overrides */
 .recharts-default-tooltip {
-  background-color: #18181b !important;
-  border: 1px solid #27272a !important;
+  background-color: #0d0b14 !important;
+  border: 1px solid #1e1a2e !important;
   border-radius: 12px !important;
 }
 .recharts-cartesian-axis-tick text {
-  fill: #71717a;
+  fill: #7b6fa0;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
 }

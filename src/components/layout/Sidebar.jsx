@@ -46,7 +46,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`relative hidden lg:flex h-screen shrink-0 flex-col border-r border-zinc-800 bg-zinc-950/80 backdrop-blur transition-all duration-300 ${collapsed ? 'w-[76px]' : 'w-64'
+      className={`relative hidden lg:flex h-screen shrink-0 flex-col border-r border-void-800 bg-void-950/80 backdrop-blur transition-all duration-300 ${collapsed ? 'w-[76px]' : 'w-64'
         }`}
     >
       {/* Logo / toggle area */}
@@ -61,7 +61,7 @@ export default function Sidebar({
 
           {!collapsed && (
             <div className="flex flex-col overflow-hidden animate-fade-in">
-              <span className="truncate text-sm font-bold tracking-tight text-zinc-50">Lumen</span>
+              <span className="truncate text-sm font-bold tracking-tight text-void-50">Lumen</span>
             </div>
           )}
         </div>
@@ -73,7 +73,7 @@ export default function Sidebar({
             onToggle();
           }}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="absolute right-[-14px] top-1/2 z-20 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-zinc-300 opacity-0 shadow-lg transition-all duration-300 hover:border-indigo-500 hover:text-indigo-400 group-hover/logo:opacity-100 cursor-pointer"
+          className="absolute right-[-14px] top-1/2 z-20 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-void-700 bg-void-900 text-void-400 opacity-0 shadow-lg transition-all duration-300 hover:border-violet-500 hover:text-violet-400 group-hover/logo:opacity-100 cursor-pointer"
         >
           {collapsed ? (
             <ChevronRight size={14} className="translate-x-[0.5px]" />
@@ -89,18 +89,18 @@ export default function Sidebar({
           <button
             onClick={onToggle}
             title="Search transactions..."
-            className="flex h-10 w-full items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-500 transition hover:border-zinc-700 hover:text-zinc-200"
+            className="flex h-10 w-full items-center justify-center rounded-xl border border-void-800 bg-void-900/60 text-void-500 transition hover:border-void-700 hover:text-void-200"
           >
             <Search size={16} />
           </button>
         ) : (
           <div className="relative">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-void-500" />
             <input
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Search transactions..."
-              className="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 py-2 pl-9 pr-3 text-xs font-semibold text-zinc-200 placeholder:text-zinc-600 outline-none transition focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-xl border border-void-800 bg-void-900/60 h-10 pl-9 pr-3 text-xs font-semibold text-void-200 placeholder:text-void-500 outline-none transition focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/20"
             />
           </div>
         )}
@@ -117,18 +117,18 @@ export default function Sidebar({
               title={collapsed ? item.label : undefined}
               className={`group/nav relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 ${collapsed ? 'justify-center' : ''
                 } ${active
-                  ? 'bg-zinc-800/80 text-zinc-50 border border-zinc-700/30'
-                  : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200'
+                  ? 'bg-void-800/80 text-void-50 border border-void-700/30'
+                  : 'text-void-400 hover:bg-void-800/40 hover:text-void-200'
                 }`}
             >
               {/* Active left-border indicator */}
               <span
-                className={`absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-indigo-400 transition-all duration-300 ${active ? 'opacity-100' : 'opacity-0'
+                className={`absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-violet-400 transition-all duration-300 ${active ? 'opacity-100' : 'opacity-0'
                   }`}
               />
               <item.icon
                 size={19}
-                className={`shrink-0 transition-colors ${active ? 'text-indigo-400' : ''}`}
+                className={`shrink-0 transition-colors ${active ? 'text-violet-400' : ''}`}
               />
               {!collapsed && <span className="truncate">{item.label}</span>}
             </button>
@@ -137,11 +137,11 @@ export default function Sidebar({
       </nav>
 
       {/* Account switcher */}
-      <div className="relative border-t border-zinc-800 p-3" ref={switcherRef}>
+      <div className="relative border-t border-void-800 p-3" ref={switcherRef}>
         <button
           onClick={() => setSwitcherOpen((v) => !v)}
           title={collapsed ? activeAccount.name : undefined}
-          className={`flex w-full items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-2.5 transition-all duration-200 hover:border-zinc-700 hover:bg-zinc-800/60 active:scale-[0.98] ${collapsed ? 'justify-center' : ''
+          className={`flex w-full items-center gap-3 rounded-xl border border-void-800 bg-void-900 p-2.5 transition-all duration-200 hover:border-void-700 hover:bg-void-800/60 active:scale-[0.98] ${collapsed ? 'justify-center' : ''
             }`}
         >
           <span
@@ -152,14 +152,14 @@ export default function Sidebar({
           {!collapsed && (
             <>
               <span className="min-w-0 flex-1 text-left">
-                <span className="block truncate text-xs font-bold text-zinc-100">
+                <span className="block truncate text-xs font-bold text-void-50">
                   {activeAccount.name}
                 </span>
-                <span className="block truncate text-[11px] font-medium text-zinc-500">
+                <span className="block truncate text-[11px] font-medium text-void-500">
                   {activeAccount.owner}
                 </span>
               </span>
-              <ChevronsUpDown size={15} className="text-zinc-500" />
+              <ChevronsUpDown size={15} className="text-void-500" />
             </>
           )}
         </button>
@@ -167,11 +167,10 @@ export default function Sidebar({
         {/* Dropdown — when collapsed, anchor to the right of the sidebar */}
         {switcherOpen && (
           <div
-            className={`absolute bottom-3 z-30 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-2xl shadow-black/50 ${
-              collapsed ? 'w-56 left-[68px]' : 'left-3 right-3'
-            }`}
+            className={`absolute bottom-3 z-30 overflow-hidden rounded-xl border border-void-800 bg-void-900 shadow-2xl shadow-black/50 ${collapsed ? 'w-56 left-[68px]' : 'left-3 right-3'
+              }`}
           >
-            <p className="border-b border-zinc-800 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+            <p className="border-b border-void-800 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-void-500">
               Switch Account
             </p>
             <div className="max-h-64 overflow-y-auto p-1.5">
@@ -184,7 +183,7 @@ export default function Sidebar({
                       onSelectAccount(acc.id);
                       setSwitcherOpen(false);
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors duration-150 hover:bg-zinc-800/70"
+                    className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors duration-150 hover:bg-void-800/70"
                   >
                     <span
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${acc.accent} text-xs font-bold text-white`}
@@ -192,14 +191,14 @@ export default function Sidebar({
                       {acc.initials}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs font-bold text-zinc-100">
+                      <span className="block truncate text-xs font-bold text-void-50">
                         {acc.name}
                       </span>
-                      <span className="block truncate text-[11px] font-medium text-zinc-500">
+                      <span className="block truncate text-[11px] font-medium text-void-500">
                         {acc.owner}
                       </span>
                     </span>
-                    {active && <Check size={15} className="text-indigo-400" />}
+                    {active && <Check size={15} className="text-violet-400" />}
                   </button>
                 );
               })}

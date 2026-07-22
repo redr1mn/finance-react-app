@@ -32,8 +32,8 @@ export default function DashboardHome({ account, accounts, onNavigate, onNewTran
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-zinc-500">{account.name}</p>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-50 font-sans">
+        <p className="text-sm font-medium text-void-500">{account.name}</p>
+        <h1 className="text-2xl font-bold tracking-tight text-void-50 font-sans">
           Welcome back, {account.owner.split(' ')[0]} 👋
         </h1>
       </div>
@@ -70,8 +70,8 @@ export default function DashboardHome({ account, accounts, onNavigate, onNewTran
             key={a.label}
             onClick={a.onClick}
             className={`group inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer ${a.primary
-                ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-600 hover:shadow-indigo-500/40'
-                : 'border border-zinc-800 bg-zinc-900 text-zinc-200 hover:border-zinc-700 hover:bg-zinc-800'
+                ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/25 hover:bg-violet-700 hover:shadow-violet-500/40'
+                : 'border border-void-800 bg-void-900 text-void-200 hover:border-void-700 hover:bg-void-800'
               }`}
           >
             <a.icon size={16} />

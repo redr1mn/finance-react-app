@@ -46,7 +46,7 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-zinc-950 font-sans text-zinc-200">
+    <div className="flex h-screen w-full overflow-hidden bg-void-950 font-sans text-void-200">
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed((v) => !v)}
@@ -65,10 +65,10 @@ export default function DashboardLayout() {
       {/* Main Container */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile Top Bar */}
-        <header className="relative z-30 flex h-16 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-4 backdrop-blur lg:hidden">
+        <header className="relative z-30 flex h-16 shrink-0 items-center justify-between border-b border-void-800 bg-void-950/80 px-4 backdrop-blur lg:hidden">
           <div className="flex items-center gap-2">
             <img src={viteLogo} alt="Lumen" className="h-8 w-8 shrink-0" />
-            <span className="text-sm font-bold tracking-tight text-zinc-50">Lumen</span>
+            <span className="text-sm font-bold tracking-tight text-void-50">Lumen</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -76,20 +76,20 @@ export default function DashboardLayout() {
             <div className="relative">
               <button
                 onClick={() => setMobileAccountOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-lg bg-zinc-900 border border-zinc-800 p-1.5 text-left text-xs font-bold text-zinc-100 hover:bg-zinc-800 active:scale-95 transition"
+                className="flex items-center gap-2 rounded-lg bg-void-900 border border-void-800 p-1.5 text-left text-xs font-bold text-void-50 hover:bg-void-800 active:scale-95 transition"
               >
                 <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded ${activeAccount.accent} text-[10px] font-bold text-white`}>
                   {activeAccount.initials}
                 </span>
                 <span className="max-w-[70px] truncate">{activeAccount.name}</span>
-                <ChevronDown size={14} className="text-zinc-500" />
+                <ChevronDown size={14} className="text-void-500" />
               </button>
 
               {mobileAccountOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMobileAccountOpen(false)} />
-                  <div className="absolute right-0 mt-2 z-50 w-52 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 shadow-2xl shadow-black/80">
-                    <p className="border-b border-zinc-800 px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+                  <div className="absolute right-0 mt-2 z-50 w-52 overflow-hidden rounded-xl border border-void-800 bg-void-950 shadow-2xl shadow-black/80">
+                    <p className="border-b border-void-800 px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-void-500">
                       Switch Account
                     </p>
                     <div className="max-h-60 overflow-y-auto p-1">
@@ -102,13 +102,13 @@ export default function DashboardLayout() {
                               setActiveAccountId(acc.id);
                               setMobileAccountOpen(false);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors duration-150 hover:bg-zinc-800/70"
+                            className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors duration-150 hover:bg-void-800/70"
                           >
                             <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded ${acc.accent} text-[10px] font-bold text-white`}>
                               {acc.initials}
                             </span>
-                            <span className="flex-1 truncate text-xs font-bold text-zinc-100">{acc.name}</span>
-                            {active && <Check size={13} className="text-indigo-400" />}
+                            <span className="flex-1 truncate text-xs font-bold text-void-50">{acc.name}</span>
+                            {active && <Check size={13} className="text-violet-400" />}
                           </button>
                         );
                       })}
@@ -121,7 +121,7 @@ export default function DashboardLayout() {
             {/* Hamburger Button */}
             <button
               onClick={() => setDrawerOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-200 active:scale-95 transition"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-void-800 bg-void-900 text-void-400 hover:text-void-200 active:scale-95 transition"
             >
               <Menu size={18} />
             </button>
@@ -130,18 +130,18 @@ export default function DashboardLayout() {
 
         {/* Mobile Navigation Drawer */}
         <div
-          className={`fixed inset-0 z-50 lg:hidden flex flex-col bg-zinc-950/95 transition-all duration-300 ${drawerOpen ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-full pointer-events-none'
+          className={`fixed inset-0 z-50 lg:hidden flex flex-col bg-void-950/95 transition-all duration-300 ${drawerOpen ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-full pointer-events-none'
             }`}
         >
           {/* Drawer Header */}
-          <div className="flex h-16 items-center justify-between px-4 border-b border-zinc-900">
+          <div className="flex h-16 items-center justify-between px-4 border-b border-void-900">
             <div className="flex items-center gap-2">
               <img src={viteLogo} alt="Lumen" className="h-8 w-8 shrink-0" />
-              <span className="text-sm font-bold tracking-tight text-zinc-50">Lumen</span>
+              <span className="text-sm font-bold tracking-tight text-void-50">Lumen</span>
             </div>
             <button
               onClick={() => setDrawerOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-200"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-void-800 bg-void-900 text-void-400 hover:text-void-200"
             >
               <X size={18} />
             </button>
@@ -152,12 +152,12 @@ export default function DashboardLayout() {
             {/* Global Search Bar */}
             <div>
               <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-void-500" />
                 <input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search transactions..."
-                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 py-2.5 pl-9 pr-3 text-sm font-medium text-zinc-200 placeholder:text-zinc-600 outline-none transition focus:border-indigo-500/60"
+                  className="w-full rounded-xl border border-void-800 bg-void-900/60 py-2.5 pl-9 pr-3 text-sm font-medium text-void-200 placeholder:text-void-500 outline-none transition focus:border-violet-500/60"
                 />
               </div>
             </div>
@@ -171,17 +171,17 @@ export default function DashboardLayout() {
                     setDrawerOpen(false);
                   }}
                   className={`group/nav relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${activePage === 'home'
-                    ? 'bg-zinc-800/80 text-zinc-50 border border-zinc-700/30'
-                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                    ? 'bg-void-800/80 text-void-50 border border-void-700/30'
+                    : 'text-void-400 hover:bg-void-900 hover:text-void-200'
                     }`}
                 >
                   <span
-                    className={`absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-indigo-400 transition-all duration-300 ${activePage === 'home' ? 'opacity-100' : 'opacity-0'
+                    className={`absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-violet-400 transition-all duration-300 ${activePage === 'home' ? 'opacity-100' : 'opacity-0'
                       }`}
                   />
                   <LayoutDashboard
                     size={19}
-                    className={`shrink-0 transition-colors ${activePage === 'home' ? 'text-indigo-400' : ''}`}
+                    className={`shrink-0 transition-colors ${activePage === 'home' ? 'text-violet-400' : ''}`}
                   />
                   <span>Home</span>
                 </button>
@@ -191,17 +191,17 @@ export default function DashboardLayout() {
                     setDrawerOpen(false);
                   }}
                   className={`group/nav relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${activePage === 'payments'
-                    ? 'bg-zinc-800/80 text-zinc-50 border border-zinc-700/30'
-                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                    ? 'bg-void-800/80 text-void-50 border border-void-700/30'
+                    : 'text-void-400 hover:bg-void-900 hover:text-void-200'
                     }`}
                 >
                   <span
-                    className={`absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-indigo-400 transition-all duration-300 ${activePage === 'payments' ? 'opacity-100' : 'opacity-0'
+                    className={`absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-violet-400 transition-all duration-300 ${activePage === 'payments' ? 'opacity-100' : 'opacity-0'
                       }`}
                   />
                   <CreditCard
                     size={19}
-                    className={`shrink-0 transition-colors ${activePage === 'payments' ? 'text-indigo-400' : ''}`}
+                    className={`shrink-0 transition-colors ${activePage === 'payments' ? 'text-violet-400' : ''}`}
                   />
                   <span>Payments</span>
                 </button>

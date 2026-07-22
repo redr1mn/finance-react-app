@@ -220,7 +220,7 @@ export default function DashboardLayout() {
           </div>
 
           {/* Drawer scrollable body */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
 
             {/* Search */}
             <div className="px-4 py-4 border-b border-void-800/60">
@@ -342,6 +342,32 @@ export default function DashboardLayout() {
               </div>
             </div>
           </div>
+
+          {/* Drawer footer: User Profile & Session Manager */}
+          {currentUser && (
+            <div className="border-t border-void-800 p-3 bg-void-900/60 shrink-0">
+              <div
+                onClick={() => { setDrawerOpen(false); setLoginPanelOpen(true); }}
+                className="flex items-center justify-between rounded-xl border border-void-800/80 bg-void-900 p-2.5 cursor-pointer hover:bg-void-800/60 transition"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className={`h-8 w-8 shrink-0 rounded-xl ${currentUser.avatar} flex items-center justify-center text-xs font-bold text-white shadow-sm`}>
+                    {currentUser.initials}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-void-50 truncate">{currentUser.name}</p>
+                    <p className="text-[10px] font-medium text-emerald-400 flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Active Session
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-semibold text-violet-400 bg-violet-500/10 border border-violet-500/30 px-2 py-1 rounded-lg">
+                  Switch
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── Page content ────────────────────────────────────────── */}

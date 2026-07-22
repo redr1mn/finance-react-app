@@ -257,7 +257,7 @@ export default function PaymentsList({
               key={i}
               className="rounded-2xl border border-void-800 bg-void-900/80 p-4 space-y-3 shadow-md transition hover:border-void-700"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-void-50 text-sm truncate">{t.description}</p>
                   <p className="text-[11px] font-medium text-void-500 mt-0.5">

@@ -1,28 +1,77 @@
-import { useEffect, useState, useMemo } from 'react';
-import { X, ArrowDownLeft, ArrowUpRight, ChevronDown, Check } from 'lucide-react';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { X, ArrowDownLeft, ArrowUpRight, ChevronDown, Check, Loader2 } from 'lucide-react';
 import { formatCurrency } from '../../data/accounts';
 
 const CATEGORIES = ['Groceries', 'Transport', 'Housing', 'Entertainment', 'Utilities', 'Transfer', 'Investment', 'Travel', 'Fees', 'Income'];
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+/**
+ * Custom select dropdown component for modal forms.
+ * Portals directly to document.body with smart directional positioning
+ * to escape all modal clipping boundaries and scroll containers.
+ *
+ * @param {Object} props - Component properties.
+ * @param {string} props.label - Input label text.
+ * @param {string} props.value - Currently selected value.
+ * @param {Array<{value: string, label: string}>} props.options - Select options array.
+ * @param {boolean} [props.disabled=false] - Whether the select input is disabled.
+ * @param {Function} props.onChange - Value change callback handler.
+ */
 function ModalSelect({ label, value, options, disabled, onChange }) {
   const [open, setOpen] = useState(false);
+  const buttonRef = useRef(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, openUp: false });
 
   const activeLabel = useMemo(() => {
     return options.find((o) => o.value === value)?.label || value;
   }, [value, options]);
 
+  const updateCoords = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUp = spaceBelow < 220 && rect.top > 220;
+      setCoords({
+        top: openUp ? rect.top - 6 : rect.bottom + 6,
+        left: rect.left,
+        width: rect.width,
+        openUp,
+      });
+    }
+  };
+
+  const handleToggle = () => {
+    if (disabled) return;
+    if (!open) {
+      updateCoords();
+    }
+    setOpen(!open);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const handleScrollOrResize = () => updateCoords();
+    window.addEventListener('resize', handleScrollOrResize);
+    window.addEventListener('scroll', handleScrollOrResize, true);
+    return () => {
+      window.removeEventListener('resize', handleScrollOrResize);
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+    };
+  }, [open]);
+
   return (
-    <div className={`relative w-full ${disabled ? 'opacity-50' : ''}`}>
+    <div className={`w-full ${disabled ? 'opacity-50' : ''}`}>
       <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-void-500">
         {label}
       </span>
       <button
+        ref={buttonRef}
         type="button"
         disabled={disabled}
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between gap-2 rounded-lg border border-void-800 bg-void-950/60 px-3 py-2.5 text-sm font-semibold text-void-200 hover:bg-void-900 transition outline-none disabled:cursor-not-allowed cursor-pointer"
+        onClick={handleToggle}
+        className="flex w-full items-center justify-between gap-2 rounded-xl border border-void-800 bg-void-950/60 px-3 py-2.5 text-sm font-semibold text-void-200 hover:bg-void-900 transition outline-none disabled:cursor-not-allowed cursor-pointer"
       >
         <span className="truncate">{activeLabel}</span>
         {!disabled && (
@@ -30,10 +79,20 @@ function ModalSelect({ label, value, options, disabled, onChange }) {
         )}
       </button>
 
-      {open && !disabled && (
+      {open && !disabled && createPortal(
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 right-0 mt-1.5 z-50 max-h-48 overflow-y-auto rounded-lg border border-void-800 bg-void-900 p-1 shadow-2xl animate-fade-in custom-scrollbar">
+          <div className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} aria-hidden="true" />
+          <div
+            style={{
+              position: 'fixed',
+              left: `${coords.left}px`,
+              width: `${coords.width}px`,
+              ...(coords.openUp
+                ? { bottom: `${window.innerHeight - coords.top}px` }
+                : { top: `${coords.top}px` }),
+            }}
+            className="z-[9999] max-h-52 overflow-y-auto rounded-xl border border-void-700 bg-void-900 p-1.5 shadow-2xl shadow-black/90 animate-fade-in custom-scrollbar"
+          >
             {options.map((opt) => {
               const selected = opt.value === value;
               return (
@@ -44,7 +103,7 @@ function ModalSelect({ label, value, options, disabled, onChange }) {
                     onChange(opt.value);
                     setOpen(false);
                   }}
-                  className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-xs font-semibold transition cursor-pointer ${selected ? 'text-violet-400 bg-void-800/40' : 'text-void-300 hover:bg-void-800/70'
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-semibold transition cursor-pointer ${selected ? 'text-violet-400 bg-void-800/60' : 'text-void-300 hover:bg-void-800/70'
                     }`}
                 >
                   <span className="truncate">{opt.label}</span>
@@ -53,31 +112,32 @@ function ModalSelect({ label, value, options, disabled, onChange }) {
               );
             })}
           </div>
-        </>
+        </>,
+        document.body,
       )}
     </div>
   );
 }
 
 /**
- * NewTransactionModal — form to add a transaction to the active account.
- * Mount this with a fresh `key` per open so initial state resets cleanly.
+ * Modal dialog component for recording new income or expense transactions.
+ * Supports amount, category, date, description, and status inputs with inline loading state.
  *
- * Props:
- *   open      boolean
- *   onClose   () => void
- *   onSubmit  (tx) => void   // tx shape: { date, description, category, amount, status }
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.open - Visibility state of the modal.
+ * @param {Function} props.onClose - Modal dismissal callback.
+ * @param {Function} props.onSubmit - Submission handler receiving the new transaction record.
  */
 export default function NewTransactionModal({ open, onClose, onSubmit }) {
-  const [type, setType] = useState('expense'); // 'expense' | 'income'
+  const [type, setType] = useState('expense');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Groceries');
   const [date, setDate] = useState(today());
   const [status, setStatus] = useState('Completed');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Close on Escape.
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
     if (open) document.addEventListener('keydown', onKey);
@@ -95,22 +155,26 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!valid) {
-      setError('Please enter a description and a valid amount greater than zero.');
+    if (!valid || isSubmitting) {
+      if (!valid) setError('Please enter a description and a valid amount greater than zero.');
       return;
     }
-    onSubmit({
-      date,
-      description: description.trim(),
-      category: type === 'income' ? 'Income' : category,
-      amount: type === 'income' ? Math.abs(parsedAmount) : -Math.abs(parsedAmount),
-      status,
-    });
-    onClose();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      onSubmit({
+        date,
+        description: description.trim(),
+        category: type === 'income' ? 'Income' : category,
+        amount: type === 'income' ? Math.abs(parsedAmount) : -Math.abs(parsedAmount),
+        status,
+      });
+      setIsSubmitting(false);
+      onClose();
+    }, 300);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 animate-fade-in">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -119,25 +183,26 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
 
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-md rounded-2xl border border-void-800 bg-void-900 shadow-2xl shadow-black/60"
+        className="relative w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-2xl border border-void-800 bg-void-900 shadow-2xl shadow-black/60"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-void-800 px-5 py-4 rounded-t-2xl">
+        <div className="flex items-center justify-between border-b border-void-800 px-4 sm:px-5 py-3.5 sm:py-4">
           <div>
-            <h2 className="text-base font-bold text-void-50">New Transaction</h2>
+            <h2 className="text-sm sm:text-base font-bold text-void-50">New Transaction</h2>
             <p className="text-xs font-medium text-void-500">Add an entry to this account</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-void-400 transition hover:bg-void-800 hover:text-void-200 active:scale-95"
+            aria-label="Close modal"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-void-400 transition hover:bg-void-800 hover:text-void-200 active:scale-95 cursor-pointer"
           >
-            <X size={17} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="space-y-4 px-5 py-5">
+        <div className="space-y-4 px-4 sm:px-5 py-4 sm:py-5">
           {/* Type toggle */}
           <div className="grid grid-cols-2 gap-2 rounded-xl border border-void-800 bg-void-950/60 p-1">
             <button
@@ -198,7 +263,7 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
           </div>
 
           {/* Category + Date row */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 relative z-20">
             <ModalSelect
               label="Category"
               value={category}
@@ -255,26 +320,33 @@ export default function NewTransactionModal({ open, onClose, onSubmit }) {
         </div>
 
         {/* Footer */}
-        <div className={`flex items-center justify-end gap-3 border-t border-void-800 px-5 py-4 ${valid ? '' : 'rounded-b-2xl'}`}>
+        <div className="flex items-center justify-end gap-3 border-t border-void-800 px-4 sm:px-5 py-3.5 sm:py-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-void-800 bg-void-950/60 px-4 py-2 text-sm font-semibold text-void-300 transition hover:bg-void-800 active:scale-95"
+            className="rounded-xl border border-void-800 bg-void-950/60 px-4 py-2 text-sm font-semibold text-void-300 transition hover:bg-void-800 active:scale-95 cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            disabled={!valid}
-            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:bg-violet-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!valid || isSubmitting}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:bg-violet-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer min-w-[130px]"
           >
-            Add Transaction
+            {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <span>Add Transaction</span>
+            )}
           </button>
         </div>
 
         {/* Preview hint */}
         {valid && (
-          <div className="border-t border-void-800 bg-void-950/40 px-5 py-3 text-center text-xs font-medium text-void-500 rounded-b-2xl">
+          <div className="border-t border-void-800 bg-void-950/40 px-4 sm:px-5 py-2.5 text-center text-xs font-medium text-void-500">
             This will add{' '}
             <span className={type === 'income' ? 'text-emerald-400' : 'text-rose-400'}>
               {formatCurrency(

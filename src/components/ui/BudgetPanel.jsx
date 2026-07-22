@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import { X, Target, Wallet, TrendingUp } from 'lucide-react';
+import { X, Target, Wallet, TrendingUp, Loader2 } from 'lucide-react';
 import { formatCurrency } from '../../data/accounts';
 
 /**
- * BudgetPanel — centered floating modal to edit an account's budget settings.
+ * Centered modal dialog for adjusting monthly budget limits, declared income,
+ * and monthly savings targets for a selected account.
  *
- * Props:
- *   account   — the account object being edited
- *   onSave    — (accountId, newBudget) => void
- *   onClose   — () => void
+ * @param {Object} props - Component properties.
+ * @param {Object} props.account - Target account object being edited.
+ * @param {Function} props.onSave - Callback handler invoked with (accountId, newBudget).
+ * @param {Function} props.onClose - Modal close handler.
  */
 export default function BudgetPanel({ account, onSave, onClose }) {
   const [limit, setLimit]   = useState(String(account.budget.monthlyLimit));
   const [income, setIncome] = useState(String(account.budget.initialIncome));
   const [savings, setSavings] = useState(String(account.budget.savingsTarget));
+  const [isSaving, setIsSaving] = useState(false);
 
   const parsedLimit   = parseFloat(limit)   || 0;
   const parsedIncome  = parseFloat(income)  || 0;
@@ -30,25 +32,27 @@ export default function BudgetPanel({ account, onSave, onClose }) {
   const projectedSavings = Math.max(0, parsedIncome - account.monthlySpending);
 
   const handleSave = () => {
-    onSave(account.id, {
-      monthlyLimit:   parsedLimit,
-      initialIncome:  parsedIncome,
-      savingsTarget:  parsedSavings,
-    });
-    onClose();
+    if (isSaving) return;
+    setIsSaving(true);
+    setTimeout(() => {
+      onSave(account.id, {
+        monthlyLimit:   parsedLimit,
+        initialIncome:  parsedIncome,
+        savingsTarget:  parsedSavings,
+      });
+      setIsSaving(false);
+      onClose();
+    }, 300);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 animate-fade-in">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-void-700 bg-void-900 shadow-2xl shadow-black/70">
-        {/* Violet accent top strip */}
-        <div className="h-[3px] w-full bg-gradient-to-r from-violet-700 via-violet-400 to-violet-700" />
-
+      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-2xl border border-void-700 bg-void-900 shadow-2xl shadow-black/70">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-void-800 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-void-800 px-4 sm:px-5 py-3.5 sm:py-4">
           <div className="flex items-center gap-3">
             <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${account.accent} text-sm font-bold text-white shadow-md`}>
               {account.initials}
@@ -60,14 +64,15 @@ export default function BudgetPanel({ account, onSave, onClose }) {
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-void-400 transition hover:bg-void-800 hover:text-void-200 active:scale-95"
+            aria-label="Close modal"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-void-400 transition hover:bg-void-800 hover:text-void-200 active:scale-95 cursor-pointer"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Current month status */}
-        <div className="px-5 py-4 border-b border-void-800 bg-void-950/50">
+        <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-void-800 bg-void-950/50">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-semibold text-void-400">This Month's Spending</p>
             <span className={`text-xs font-bold ${textColor}`}>{statusLabel}</span>
@@ -92,7 +97,7 @@ export default function BudgetPanel({ account, onSave, onClose }) {
         </div>
 
         {/* Editable fields */}
-        <div className="space-y-5 px-5 py-5">
+        <div className="space-y-4 sm:space-y-5 px-4 sm:px-5 py-4 sm:py-5">
 
           {/* Monthly Spending Limit */}
           <div>
@@ -165,20 +170,28 @@ export default function BudgetPanel({ account, onSave, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-void-800 px-5 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-void-800 px-4 sm:px-5 py-3.5 sm:py-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-void-800 bg-void-950/60 px-4 py-2 text-sm font-semibold text-void-300 transition hover:bg-void-800 active:scale-95"
+            className="rounded-xl border border-void-800 bg-void-950/60 px-4 py-2 text-sm font-semibold text-void-300 transition hover:bg-void-800 active:scale-95 cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="button"
+            disabled={isSaving}
             onClick={handleSave}
-            className="rounded-xl bg-violet-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 active:scale-95 disabled:opacity-50 cursor-pointer min-w-[120px]"
           >
-            Save Budget
+            {isSaving ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <span>Save Budget</span>
+            )}
           </button>
         </div>
       </div>

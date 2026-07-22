@@ -9,9 +9,11 @@ const CATEGORIES = [
 ];
 
 /**
- * Deterministic pseudo-random time from a transaction description.
- * Keeps the same time per transaction across renders without touching the data.
- * Replace with a real datetime field once the backend is ready.
+ * Generates a deterministic formatted timestamp string from a transaction description.
+ * Ensures consistent time presentation across re-renders for mock transaction records.
+ *
+ * @param {string} description - Transaction description string used as hash seed.
+ * @returns {string} Formatted 12-hour time string (e.g. "09:45 AM").
  */
 function fakeTime(description) {
   let h = 0;
@@ -25,6 +27,15 @@ function fakeTime(description) {
   return `${String(h12).padStart(2, '0')}:${String(min).padStart(2, '0')} ${ampm}`;
 }
 
+/**
+ * Custom dropdown select component for filtering transaction lists.
+ *
+ * @param {Object} props - Component properties.
+ * @param {string} props.label - Field label displayed above the select trigger.
+ * @param {string} props.value - Currently selected option value.
+ * @param {Array<{value: string, label: string}>} props.options - Array of available dropdown options.
+ * @param {Function} props.onChange - Selection change callback handler.
+ */
 function FilterSelect({ label, value, options, onChange }) {
   const [open, setOpen] = useState(false);
   const activeLabel = useMemo(
@@ -77,7 +88,15 @@ function FilterSelect({ label, value, options, onChange }) {
 }
 
 /**
- * PaymentsList — filterable transaction history with budget status banner.
+ * Filterable transaction history view featuring search indexing, category/type/status filtering,
+ * budget health summary banner, and paginated/scrolled transaction records.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Object} props.account - Active account object.
+ * @param {Function} props.onNewTransaction - Modal trigger callback for adding transactions.
+ * @param {Function} props.onEditBudget - Modal trigger callback for updating budget parameters.
+ * @param {string} props.searchQuery - Active search query text.
+ * @param {Function} props.onSearchChange - Callback handler for updating search query text.
  */
 export default function PaymentsList({
   account,
@@ -118,7 +137,6 @@ export default function PaymentsList({
     { value: 'Pending', label: 'Pending' },
   ];
 
-  // Budget banner calculations
   const budget = account.budget;
   const spentPct = budget?.monthlyLimit > 0
     ? Math.min((account.monthlySpending / budget.monthlyLimit) * 100, 100)
@@ -156,7 +174,7 @@ export default function PaymentsList({
 
       {/* ── Budget status banner ─────────────────────────────────── */}
       {budget && (
-        <div className="flex items-center gap-4 rounded-2xl border border-void-800 bg-void-900/80 px-5 py-3.5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 rounded-2xl border border-void-800 bg-void-900/80 p-4 sm:px-5 sm:py-3.5 shadow-lg shadow-black/20">
           {/* Progress + labels */}
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between mb-1.5">
@@ -179,31 +197,33 @@ export default function PaymentsList({
             </div>
           </div>
 
-          {/* Amounts */}
-          <div className="shrink-0 text-right border-l border-void-800 pl-4">
-            <p className="text-base font-extrabold text-void-50 tracking-tight">
-              {formatCurrency(account.monthlySpending)}
-            </p>
-            <p className="text-[11px] font-medium text-void-500">
-              of {formatCurrency(budget.monthlyLimit)} limit
-            </p>
-          </div>
+          {/* Amounts & edit trigger wrapper */}
+          <div className="flex items-center justify-between sm:justify-end shrink-0 border-t sm:border-t-0 sm:border-l border-void-800 pt-3 sm:pt-0 sm:pl-4 gap-4">
+            <div className="text-left sm:text-right">
+              <p className="text-base font-extrabold text-void-50 tracking-tight">
+                {formatCurrency(account.monthlySpending)}
+              </p>
+              <p className="text-[11px] font-medium text-void-500">
+                of {formatCurrency(budget.monthlyLimit)} limit
+              </p>
+            </div>
 
-          {/* Edit button */}
-          <button
-            onClick={() => onEditBudget(account)}
-            title="Edit budget"
-            className="shrink-0 flex items-center gap-1.5 rounded-lg border border-void-800 bg-void-950/60 px-3 py-2 text-xs font-semibold text-void-400 transition hover:border-violet-500/50 hover:text-violet-400 active:scale-95"
-          >
-            <Settings size={12} />
-            Edit
-          </button>
+            {/* Edit button */}
+            <button
+              onClick={() => onEditBudget(account)}
+              title="Edit budget"
+              className="shrink-0 flex items-center gap-1.5 rounded-xl border border-void-800 bg-void-950/60 px-3 py-2 text-xs font-semibold text-void-400 transition hover:border-violet-500/50 hover:text-violet-400 active:scale-95 cursor-pointer"
+            >
+              <Settings size={13} />
+              Edit
+            </button>
+          </div>
         </div>
       )}
 
       {/* ── Filters ─────────────────────────────────────────────── */}
-      <div className="grid grid-cols-12 gap-4 rounded-2xl border border-void-800 bg-void-900/80 p-4 items-end">
-        <div className="col-span-12 md:col-span-6 lg:col-span-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 rounded-2xl border border-void-800 bg-void-900/80 p-3.5 sm:p-4 items-end">
+        <div className="col-span-2 sm:col-span-2 lg:col-span-4">
           <span className="text-[10px] font-bold uppercase tracking-wider text-void-500 mb-1.5 block">
             Search
           </span>
@@ -217,19 +237,82 @@ export default function PaymentsList({
             />
           </div>
         </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-2">
+        <div className="col-span-1 sm:col-span-1 lg:col-span-2">
           <FilterSelect label="Type"     value={typeFilter}     options={typeOptions}     onChange={setTypeFilter} />
         </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-3">
+        <div className="col-span-1 sm:col-span-1 lg:col-span-3">
           <FilterSelect label="Category" value={categoryFilter} options={categoryOptions} onChange={setCategoryFilter} />
         </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-3">
+        <div className="col-span-2 sm:col-span-2 lg:col-span-3">
           <FilterSelect label="Status"   value={status}         options={statusOptions}   onChange={setStatus} />
         </div>
       </div>
 
-      {/* ── Table ───────────────────────────────────────────────── */}
-      <div className="overflow-hidden rounded-2xl border border-void-800 bg-void-900/80 shadow-lg shadow-black/20">
+      {/* ── Mobile Card List View (Visible < md) ───────────────── */}
+      <div className="space-y-3 md:hidden">
+        {filtered.map((t, i) => {
+          const positive = t.amount > 0;
+          return (
+            <div
+              key={i}
+              className="rounded-2xl border border-void-800 bg-void-900/80 p-4 space-y-3 shadow-md transition hover:border-void-700"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold text-void-50 text-sm truncate">{t.description}</p>
+                  <p className="text-[11px] font-medium text-void-500 mt-0.5">
+                    {new Date(t.date).toLocaleDateString('en-US', {
+                      month: 'short', day: 'numeric', year: 'numeric',
+                    })}
+                    <span className="mx-1 text-void-700">·</span>
+                    <span>{fakeTime(t.description)}</span>
+                  </p>
+                </div>
+                <StatusBadge status={t.status} />
+              </div>
+
+              <div className="flex items-center justify-between pt-2.5 border-t border-void-800/70">
+                <span className="rounded-md border border-void-800 bg-void-950/60 px-2 py-0.5 text-xs font-semibold text-void-400">
+                  {t.category}
+                </span>
+                <span className={`text-base font-extrabold tabular-nums ${
+                  positive ? 'text-emerald-400' : 'text-void-100'
+                }`}>
+                  {formatCurrency(t.amount, { signed: true })}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div className="rounded-2xl border border-void-800 bg-void-900/80 p-8 text-center flex flex-col items-center justify-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-void-800/80 text-void-400 border border-void-700/50">
+              <Search size={20} />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-void-100">No matching transactions found</h3>
+              <p className="text-xs font-medium text-void-500 mt-1 max-w-sm mx-auto">
+                No financial records match your selected type, category, or search query.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                onSearchChange('');
+                setTypeFilter('All');
+                setCategoryFilter('All');
+                setStatus('All');
+              }}
+              className="mt-2 inline-flex items-center gap-2 rounded-xl border border-void-700 bg-void-800/60 px-4 py-2 text-xs font-semibold text-void-200 hover:bg-void-800 hover:text-white transition active:scale-95 cursor-pointer"
+            >
+              Reset Search & Filters
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ── Desktop Table View (Visible >= md) ─────────────────── */}
+      <div className="hidden md:block overflow-hidden rounded-2xl border border-void-800 bg-void-900/80 shadow-lg shadow-black/20">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-left">
             <thead>
@@ -275,8 +358,28 @@ export default function PaymentsList({
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-sm font-medium text-void-500">
-                    No transactions match your filters.
+                  <td colSpan={5} className="px-5 py-12">
+                    <div className="flex flex-col items-center justify-center gap-2.5 text-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-void-800/80 text-void-400 border border-void-700/50">
+                        <Search size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-void-200">No transactions match your filters</p>
+                        <p className="text-xs font-medium text-void-500 mt-0.5">Try adjusting search keywords or active category filters.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onSearchChange('');
+                          setTypeFilter('All');
+                          setCategoryFilter('All');
+                          setStatus('All');
+                        }}
+                        className="mt-1 inline-flex items-center gap-2 rounded-xl border border-void-700 bg-void-800/60 px-3.5 py-1.5 text-xs font-semibold text-void-200 hover:bg-void-800 hover:text-white transition active:scale-95 cursor-pointer"
+                      >
+                        Reset Search & Filters
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )}

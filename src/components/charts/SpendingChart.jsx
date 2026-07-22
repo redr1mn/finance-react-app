@@ -10,13 +10,15 @@ import {
 import { formatCurrency } from '../../data/accounts';
 
 /**
- * SpendingChart — emerald income area vs. rose spend line (with neon glow).
- * Surfaces updated to the Obsidian × Violet void palette.
+ * Interactive area chart illustrating monthly spending trends vs. income history.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Array<{month: string, spending: number, income: number}>} props.data - Time series data array.
  */
 export default function SpendingChart({ data }) {
   return (
-    <div className="rounded-2xl border border-void-800 bg-void-900/80 p-5 shadow-lg shadow-black/20">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="rounded-2xl border border-void-800 bg-void-900/80 p-4 sm:p-5 shadow-lg shadow-black/20">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h3 className="text-base font-bold text-void-50">Money Usage</h3>
           <p className="text-xs font-medium text-void-500">Monthly spending vs. income</p>
@@ -33,9 +35,9 @@ export default function SpendingChart({ data }) {
         </div>
       </div>
 
-      <div className="h-64 w-full">
+      <div className="h-52 sm:h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 8, left: -16, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 10, right: 4, left: -22, bottom: 0 }}>
             <defs>
               {/* Violet glow filter for the income area */}
               <filter id="glow-emerald" x="-50%" y="-50%" width="200%" height="200%">

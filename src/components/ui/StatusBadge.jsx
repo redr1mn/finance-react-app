@@ -1,7 +1,10 @@
 import { CheckCircle2, Clock } from 'lucide-react';
 
 /**
- * StatusBadge — subtle pill for Completed / Pending transaction states.
+ * Status badge component rendering color-coded indicators for transaction state.
+ *
+ * @param {Object} props - Component properties.
+ * @param {'Completed' | 'Pending'} props.status - Transaction completion status string.
  */
 export default function StatusBadge({ status }) {
   const completed = status === 'Completed';

@@ -1,7 +1,11 @@
-// Centralized mock data for the Personal Finance Dashboard.
-// Shape is API-ready: users own accounts, each account has budget settings.
-// Budget fields (monthlyLimit, initialIncome, savingsTarget) are editable in-memory;
-// swap the initialAccounts import for an API fetch when the backend is ready.
+/**
+ * Centralized mock dataset for the Personal Finance Dashboard.
+ * 
+ * Data Schema:
+ * - Users own accounts; each account contains budget parameters and historical series data.
+ * - Budget fields (monthlyLimit, initialIncome, savingsTarget) are mutable in application state.
+ * - Structurally aligned with backend API payloads for seamless integration.
+ */
 
 export const users = [
   { id: 'user-alex',   name: 'Alex Morgan',  initials: 'AM', avatar: 'bg-violet-600' },
@@ -228,6 +232,14 @@ export const accounts = [
   },
 ];
 
+/**
+ * Formats a given numerical value as standard US Dollar currency.
+ *
+ * @param {number} value - The numerical amount to format.
+ * @param {Object} [opts] - Formatting options.
+ * @param {boolean} [opts.signed=false] - When true, prefixes positive numbers with '+' and negative with '−'.
+ * @returns {string} Formatted currency string (e.g. "$4,500.00" or "+$6,200.00").
+ */
 export const formatCurrency = (value, opts = {}) => {
   const { signed = false } = opts;
   const abs = Math.abs(value).toLocaleString('en-US', {
@@ -241,3 +253,4 @@ export const formatCurrency = (value, opts = {}) => {
   }
   return value < 0 ? `−${abs}` : abs;
 };
+

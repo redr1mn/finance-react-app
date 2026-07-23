@@ -8,9 +8,7 @@ import {
 } from 'recharts';
 import { formatCurrency } from '../../data/accounts';
 
-// Solid color per category — kept in sync with RecentActivity dots.
-// Investment updated from indigo (#6366f1) to violet (#8b5cf6).
-// Transfer updated from zinc-400 to void-400 equivalent.
+/** Color mapping per transaction category, synchronized across charts and badge indicators. */
 const CATEGORY_COLORS = {
   Income: '#10b981', // emerald-500
   Groceries: '#0ea5e9', // sky-500
@@ -25,8 +23,11 @@ const CATEGORY_COLORS = {
 };
 
 /**
- * CategoryBreakdown — total amount spent per category (expenses only) for the
- * active account, rendered as a modern donut pie chart with split annotation lists.
+ * Displays monthly expense distribution per category as an interactive donut chart
+ * accompanied by side annotation legends.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Array<Object>} props.transactions - List of transaction objects for the selected account.
  */
 export default function CategoryBreakdown({ transactions }) {
   const data = useMemo(() => {
@@ -46,18 +47,12 @@ export default function CategoryBreakdown({ transactions }) {
   }, [transactions]);
 
   const totalSpent = data.reduce((sum, d) => sum + d.amount, 0);
-
-  // Split data into left and right annotation lists
-  const leftData = useMemo(() => {
-    return data.slice(0, Math.ceil(data.length / 2));
-  }, [data]);
-
-  const rightData = useMemo(() => {
-    return data.slice(Math.ceil(data.length / 2));
-  }, [data]);
+  const midIndex = Math.ceil(data.length / 2);
+  const leftData = data.slice(0, midIndex);
+  const rightData = data.slice(midIndex);
 
   return (
-    <div className="rounded-2xl border border-void-800 bg-void-900/80 p-5 shadow-lg shadow-black/20">
+    <div className="rounded-2xl border border-void-800 bg-void-900/80 p-4 sm:p-5 shadow-lg shadow-black/20">
       <div className="mb-4">
         <h3 className="text-base font-bold text-void-50 font-sans">Spending by Category</h3>
         <p className="text-xs font-medium text-void-500">
@@ -83,13 +78,13 @@ export default function CategoryBreakdown({ transactions }) {
           </div>
 
           {/* Center Pie Chart */}
-          <div className="relative h-64 w-[240px] shrink-0 flex items-center justify-center">
+          <div className="relative h-56 sm:h-64 w-[210px] sm:w-[240px] shrink-0 flex items-center justify-center">
             {/* Center Total Overlay inside the donut hole */}
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-void-500">
+              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-void-500">
                 Total Spent
               </span>
-              <span className="text-xl font-extrabold text-void-50 font-sans tracking-tight">
+              <span className="text-lg sm:text-xl font-extrabold text-void-50 font-sans tracking-tight">
                 {formatCurrency(totalSpent)}
               </span>
             </div>
@@ -100,15 +95,14 @@ export default function CategoryBreakdown({ transactions }) {
                   data={data}
                   cx="50%"
                   cy="50%"
-                  innerRadius={68}
-                  outerRadius={92}
-                  paddingAngle={3.5}
+                  innerRadius={60}
+                  outerRadius={84}
+                  paddingAngle={0}
                   dataKey="amount"
                   nameKey="category"
                 >
                   {data.map((entry) => (
-                    /* Stroke matches new body background: void-950 = #06040a */
-                    <Cell key={entry.category} fill={entry.color} stroke="#06040a" strokeWidth={2} />
+                    <Cell key={entry.category} fill={entry.color} stroke="none" strokeWidth={0} />
                   ))}
                 </Pie>
                 <Tooltip

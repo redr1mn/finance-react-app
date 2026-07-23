@@ -47,14 +47,9 @@ export default function CategoryBreakdown({ transactions }) {
   }, [transactions]);
 
   const totalSpent = data.reduce((sum, d) => sum + d.amount, 0);
-
-  const leftData = useMemo(() => {
-    return data.slice(0, Math.ceil(data.length / 2));
-  }, [data]);
-
-  const rightData = useMemo(() => {
-    return data.slice(Math.ceil(data.length / 2));
-  }, [data]);
+  const midIndex = Math.ceil(data.length / 2);
+  const leftData = data.slice(0, midIndex);
+  const rightData = data.slice(midIndex);
 
   return (
     <div className="rounded-2xl border border-void-800 bg-void-900/80 p-4 sm:p-5 shadow-lg shadow-black/20">

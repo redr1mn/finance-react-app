@@ -2,30 +2,12 @@ import { useMemo, useState } from 'react';
 import { Search, Plus, ChevronDown, Check, Settings } from 'lucide-react';
 import StatusBadge from './ui/StatusBadge';
 import { formatCurrency } from '../data/accounts';
+import { formatTransactionDate, formatTransactionTime } from '../utils/formatters';
 
 const CATEGORIES = [
   'All', 'Income', 'Groceries', 'Transport', 'Housing',
   'Entertainment', 'Utilities', 'Transfer', 'Investment', 'Travel', 'Fees',
 ];
-
-/**
- * Generates a deterministic formatted timestamp string from a transaction description.
- * Ensures consistent time presentation across re-renders for mock transaction records.
- *
- * @param {string} description - Transaction description string used as hash seed.
- * @returns {string} Formatted 12-hour time string (e.g. "09:45 AM").
- */
-function fakeTime(description) {
-  let h = 0;
-  for (let i = 0; i < description.length; i++) {
-    h = (h * 31 + description.charCodeAt(i)) & 0xffffffff;
-  }
-  const hour = ((h >>> 0) % 14) + 8;          // 08 – 21
-  const min  = ((h >>> 8) & 0xff) % 60;
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const h12  = hour % 12 || 12;
-  return `${String(h12).padStart(2, '0')}:${String(min).padStart(2, '0')} ${ampm}`;
-}
 
 /**
  * Custom dropdown select component for filtering transaction lists.
@@ -71,9 +53,8 @@ function FilterSelect({ label, value, options, onChange }) {
                   key={opt.value}
                   type="button"
                   onClick={() => { onChange(opt.value); setOpen(false); }}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-semibold transition cursor-pointer ${
-                    selected ? 'text-violet-400 bg-void-800/40' : 'text-void-300 hover:bg-void-800/70'
-                  }`}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-semibold transition cursor-pointer ${selected ? 'text-violet-400 bg-void-800/40' : 'text-void-300 hover:bg-void-800/70'
+                    }`}
                 >
                   <span className="truncate">{opt.label}</span>
                   {selected && <Check size={13} className="text-violet-400 shrink-0" />}
@@ -105,19 +86,19 @@ export default function PaymentsList({
   searchQuery,
   onSearchChange,
 }) {
-  const [typeFilter, setTypeFilter]         = useState('All');
+  const [typeFilter, setTypeFilter] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
-  const [status, setStatus]                 = useState('All');
+  const [status, setStatus] = useState('All');
 
   const filtered = useMemo(() => {
     return account.transactions.filter((t) => {
-      const matchesQuery    = t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                              t.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesType     = typeFilter === 'All' ||
-                              (typeFilter === 'Income'  && t.amount > 0) ||
-                              (typeFilter === 'Expense' && t.amount < 0);
+      const matchesQuery = t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = typeFilter === 'All' ||
+        (typeFilter === 'Income' && t.amount > 0) ||
+        (typeFilter === 'Expense' && t.amount < 0);
       const matchesCategory = categoryFilter === 'All' || t.category === categoryFilter;
-      const matchesStatus   = status === 'All' || t.status === status;
+      const matchesStatus = status === 'All' || t.status === status;
       return matchesQuery && matchesType && matchesCategory && matchesStatus;
     });
   }, [account, searchQuery, typeFilter, categoryFilter, status]);
@@ -142,10 +123,10 @@ export default function PaymentsList({
     ? Math.min((account.monthlySpending / budget.monthlyLimit) * 100, 100)
     : 0;
   const isOver = budget && account.monthlySpending > budget.monthlyLimit;
-  const barColor   = isOver || spentPct >= 90 ? 'bg-rose-500'    : spentPct >= 70 ? 'bg-amber-400'   : 'bg-emerald-500';
-  const textColor  = isOver || spentPct >= 90 ? 'text-rose-400'  : spentPct >= 70 ? 'text-amber-400' : 'text-emerald-400';
-  const budgetLabel = isOver ? 'Over Budget' : spentPct >= 90 ? 'Near Limit' : spentPct >= 70 ? 'Heads Up' : 'On Track';
-  const remaining  = budget ? budget.monthlyLimit - account.monthlySpending : 0;
+  const barColor = isOver || spentPct >= 90 ? 'bg-rose-500' : spentPct >= 70 ? 'bg-amber-400' : 'bg-emerald-500';
+  const textColor = isOver || spentPct >= 90 ? 'text-rose-400' : spentPct >= 70 ? 'text-amber-400' : 'text-emerald-400';
+  const budgetLabel = isOver ? 'Budget exceeded' : spentPct >= 90 ? 'Near Limit' : spentPct >= 70 ? 'Heads Up' : 'On Track';
+  const remaining = budget ? budget.monthlyLimit - account.monthlySpending : 0;
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -238,13 +219,13 @@ export default function PaymentsList({
           </div>
         </div>
         <div className="col-span-1 sm:col-span-1 lg:col-span-2">
-          <FilterSelect label="Type"     value={typeFilter}     options={typeOptions}     onChange={setTypeFilter} />
+          <FilterSelect label="Type" value={typeFilter} options={typeOptions} onChange={setTypeFilter} />
         </div>
         <div className="col-span-1 sm:col-span-1 lg:col-span-3">
           <FilterSelect label="Category" value={categoryFilter} options={categoryOptions} onChange={setCategoryFilter} />
         </div>
         <div className="col-span-2 sm:col-span-2 lg:col-span-3">
-          <FilterSelect label="Status"   value={status}         options={statusOptions}   onChange={setStatus} />
+          <FilterSelect label="Status" value={status} options={statusOptions} onChange={setStatus} />
         </div>
       </div>
 
@@ -261,11 +242,9 @@ export default function PaymentsList({
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-void-50 text-sm truncate">{t.description}</p>
                   <p className="text-[11px] font-medium text-void-500 mt-0.5">
-                    {new Date(t.date).toLocaleDateString('en-US', {
-                      month: 'short', day: 'numeric', year: 'numeric',
-                    })}
+                    {formatTransactionDate(t.timestamp || t.date)}
                     <span className="mx-1 text-void-700">·</span>
-                    <span>{fakeTime(t.description)}</span>
+                    <span>{formatTransactionTime(t.timestamp || t.date, t.description)}</span>
                   </p>
                 </div>
                 <StatusBadge status={t.status} />
@@ -275,9 +254,8 @@ export default function PaymentsList({
                 <span className="rounded-md border border-void-800 bg-void-950/60 px-2 py-0.5 text-xs font-semibold text-void-400">
                   {t.category}
                 </span>
-                <span className={`text-base font-extrabold tabular-nums ${
-                  positive ? 'text-emerald-400' : 'text-void-100'
-                }`}>
+                <span className={`text-base font-extrabold tabular-nums ${positive ? 'text-emerald-400' : 'text-void-100'
+                  }`}>
                   {formatCurrency(t.amount, { signed: true })}
                 </span>
               </div>
@@ -331,12 +309,10 @@ export default function PaymentsList({
                   <tr key={i} className="text-sm transition-colors duration-200 hover:bg-void-800/40">
                     <td className="whitespace-nowrap px-5 py-3.5">
                       <span className="block font-medium text-void-400">
-                        {new Date(t.date).toLocaleDateString('en-US', {
-                          month: 'short', day: 'numeric', year: 'numeric',
-                        })}
+                        {formatTransactionDate(t.timestamp || t.date)}
                       </span>
                       <span className="block text-[11px] font-medium text-void-600 mt-0.5">
-                        {fakeTime(t.description)}
+                        {formatTransactionTime(t.timestamp || t.date, t.description)}
                       </span>
                     </td>
                     <td className="px-5 py-3.5 font-semibold text-void-50">{t.description}</td>
@@ -345,9 +321,8 @@ export default function PaymentsList({
                         {t.category}
                       </span>
                     </td>
-                    <td className={`whitespace-nowrap px-5 py-3.5 text-right font-semibold tabular-nums ${
-                      positive ? 'text-emerald-400' : 'text-void-200'
-                    }`}>
+                    <td className={`whitespace-nowrap px-5 py-3.5 text-right font-semibold tabular-nums ${positive ? 'text-emerald-400' : 'text-void-200'
+                      }`}>
                       {formatCurrency(t.amount, { signed: true })}
                     </td>
                     <td className="px-5 py-3.5 text-right">

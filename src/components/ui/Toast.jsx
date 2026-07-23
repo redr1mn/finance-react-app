@@ -32,19 +32,17 @@ export default function Toast({ message, type = 'success', onClose }) {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-[9999] flex items-center gap-3 max-w-sm rounded-2xl border border-void-700 bg-void-900/95 p-3.5 px-4 shadow-2xl shadow-black/80 backdrop-blur-md animate-fade-in">
-      <div className="flex items-center gap-3 w-full">
-        {icons[type] || icons.success}
-        <span className="text-xs font-semibold text-void-100 flex-1">{message}</span>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Dismiss toast"
-          className="text-void-400 hover:text-void-100 transition p-1 cursor-pointer"
-        >
-          <X size={14} />
-        </button>
-      </div>
+    <div className={`fixed bottom-5 right-5 z-[9999] flex items-center gap-3 max-w-sm rounded-2xl border p-3.5 px-4 shadow-2xl shadow-black/80 backdrop-blur-md animate-fade-in ${borderThemes[type] || borderThemes.success}`}>
+      {icons[type] || icons.success}
+      <span className="text-xs font-semibold text-void-100 flex-1">{message}</span>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Dismiss toast"
+        className="text-void-400 hover:text-void-100 transition p-1 cursor-pointer"
+      >
+        <X size={14} />
+      </button>
     </div>
   );
 }

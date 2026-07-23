@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { formatCurrency } from '../../data/accounts';
 import StatusBadge from './StatusBadge';
+import { formatTransactionDate, formatTransactionTime } from '../../utils/formatters';
 
 const categoryDot = {
   Income: 'bg-emerald-500',
@@ -15,24 +16,6 @@ const categoryDot = {
   Travel: 'bg-cyan-500',
   Fees: 'bg-rose-500',
 };
-
-/**
- * Generates a deterministic formatted timestamp string from a transaction description.
- *
- * @param {string} description - Transaction description string.
- * @returns {string} Formatted 12-hour timestamp (e.g. "09:45 AM").
- */
-function fakeTime(description) {
-  let h = 0;
-  for (let i = 0; i < description.length; i++) {
-    h = (h * 31 + description.charCodeAt(i)) & 0xffffffff;
-  }
-  const hour = ((h >>> 0) % 14) + 8;
-  const min = ((h >>> 8) & 0xff) % 60;
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const h12 = hour % 12 || 12;
-  return `${String(h12).padStart(2, '0')}:${String(min).padStart(2, '0')} ${ampm}`;
-}
 
 /**
  * Compact activity feed component displaying the 5 most recent transactions across all user accounts.
@@ -54,7 +37,7 @@ export default function RecentActivity({ accounts, searchQuery }) {
     );
 
     // Sort transactions in descending chronological order
-    all.sort((a, b) => new Date(b.date) - new Date(a.date));
+    all.sort((a, b) => new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date));
 
     // Filter results matching active search query
     if (!searchQuery) return all.slice(0, 5);
@@ -114,12 +97,9 @@ export default function RecentActivity({ accounts, searchQuery }) {
                     <span>{t.category}</span>
                     <span className="text-void-700">·</span>
                     <span>
-                      {new Date(t.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {formatTransactionDate(t.timestamp || t.date, { month: 'short', day: 'numeric' })}
                       <span className="text-void-600 ml-1.5 font-medium">
-                        {fakeTime(t.description)}
+                        {formatTransactionTime(t.timestamp || t.date, t.description)}
                       </span>
                     </span>
                   </div>

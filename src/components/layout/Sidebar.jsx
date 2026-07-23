@@ -1,12 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
   Home,
   CreditCard,
   Search,
-  Plus,
-  Trash2,
 } from 'lucide-react';
 import viteLogo from '../../assets/vite.svg';
 
@@ -30,8 +27,10 @@ const NAV = [
  * @param {Function} props.onSelectAccount - Account selection callback.
  * @param {string} props.searchQuery - Current search query text.
  * @param {Function} props.onSearchChange - Search input change callback.
- * @param {Array<Object>} props.users - User profile list.
- * @param {Function} props.onEditBudget - Budget modal trigger callback.
+ * @param {Function} props.onAddAccount - Trigger callback for adding an account.
+ * @param {Function} props.onDeleteAccount - Trigger callback for deleting an account.
+ * @param {Object} props.currentUser - Currently active user profile.
+ * @param {Function} props.onOpenLoginPanel - Callback to open user login panel.
  */
 export default function Sidebar({
   collapsed,
@@ -43,8 +42,6 @@ export default function Sidebar({
   onSelectAccount,
   searchQuery,
   onSearchChange,
-  users,
-  onEditBudget,
   onAddAccount,
   onDeleteAccount,
   currentUser,

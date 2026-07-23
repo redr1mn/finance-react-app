@@ -41,7 +41,6 @@ function budgetStatus(spent, limit) {
 export default function DashboardHome({
   account,
   accounts,
-  onNavigate,
   onNewTransaction,
   onEditBudget,
   searchQuery,

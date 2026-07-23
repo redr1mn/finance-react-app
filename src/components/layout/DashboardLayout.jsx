@@ -1,8 +1,5 @@
-import { useMemo, useState } from 'react';
-import {
-  X, Search, LayoutDashboard, CreditCard,
-  ChevronRight, Plus, Trash2,
-} from 'lucide-react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
+import { X, Search, LayoutDashboard, CreditCard } from 'lucide-react';
 import viteLogo from '../../assets/vite.svg';
 import Sidebar from './Sidebar';
 import DashboardHome from '../DashboardHome';
@@ -13,7 +10,7 @@ import NewAccountModal from '../ui/NewAccountModal';
 import DeleteAccountModal from '../ui/DeleteAccountModal';
 import UserLoginPanel from '../ui/UserLoginPanel';
 import Toast from '../ui/Toast';
-import { accounts as initialAccounts, users as initialUsers } from '../../data/accounts';
+import { getAccounts, getUsers, createTransaction, updateAccountBudget } from '../../api/accountApi';
 
 /**
  * Top-level application layout manager.
@@ -24,28 +21,48 @@ import { accounts as initialAccounts, users as initialUsers } from '../../data/a
 export default function DashboardLayout() {
   const [collapsed, setCollapsed]           = useState(false);
   const [activePage, setActivePage]         = useState('home');
-  const [accounts, setAccounts]             = useState(initialAccounts);
-  const [activeAccountId, setActiveAccountId] = useState(initialAccounts[0].id);
+  const [accounts, setAccounts]             = useState([]);
+  const [loading, setLoading]               = useState(true);
+  const [activeAccountId, setActiveAccountId] = useState(null);
   const [modalOpen, setModalOpen]           = useState(false);
   const [modalSession, setModalSession]     = useState(0);
   const [budgetAccount, setBudgetAccount]   = useState(null);
   const [newAccountModalOpen, setNewAccountModalOpen]     = useState(false);
   const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState(false);
-  const [userList, setUserList]             = useState(initialUsers);
-  const [currentUser, setCurrentUser]       = useState(initialUsers[0]);
+  const [userList, setUserList]             = useState([]);
+  const [currentUser, setCurrentUser]       = useState(null);
   const [loginPanelOpen, setLoginPanelOpen] = useState(false);
   const [searchQuery, setSearchQuery]   = useState('');
   const [drawerOpen, setDrawerOpen]     = useState(false);
   const [toast, setToast]               = useState({ message: '', type: 'success' });
 
+  const showToast = useCallback((message, type = 'success') => {
+    setToast({ message, type });
+  }, []);
+
+  // ── Initial Fetch via Axios ─────────────────────────────────────────────
+  useEffect(() => {
+    async function loadInitialData() {
+      try {
+        setLoading(true);
+        const [accData, userData] = await Promise.all([getAccounts(), getUsers()]);
+        setAccounts(accData);
+        setUserList(userData);
+        if (accData.length > 0) setActiveAccountId(accData[0].id);
+        if (userData.length > 0) setCurrentUser(userData[0]);
+      } catch {
+        showToast('Failed to load accounts from API', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadInitialData();
+  }, [showToast]);
+
   const activeAccount = useMemo(
     () => accounts.find((a) => a.id === activeAccountId) ?? accounts[0],
     [accounts, activeAccountId],
   );
-
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-  };
 
   // ── Handlers ────────────────────────────────────────────────────────────
 
@@ -54,19 +71,25 @@ export default function DashboardLayout() {
     setModalOpen(true);
   };
 
-  const handleAddTransaction = (tx) => {
-    setAccounts((prev) =>
-      prev.map((acc) => {
-        if (acc.id !== activeAccountId) return acc;
-        return {
-          ...acc,
-          balance: acc.balance + tx.amount,
-          transactions: [tx, ...acc.transactions],
-        };
-      }),
-    );
-    setActivePage('payments');
-    showToast('Transaction recorded successfully', 'success');
+  const handleAddTransaction = async (tx) => {
+    try {
+      const createdTx = await createTransaction(activeAccountId, tx);
+      setAccounts((prev) =>
+        prev.map((acc) => {
+          if (acc.id !== activeAccountId) return acc;
+          return {
+            ...acc,
+            balance: acc.balance + createdTx.amount,
+            monthlySpending: createdTx.amount < 0 ? acc.monthlySpending + Math.abs(createdTx.amount) : acc.monthlySpending,
+            transactions: [createdTx, ...acc.transactions],
+          };
+        }),
+      );
+      setActivePage('payments');
+      showToast('Transaction recorded successfully', 'success');
+    } catch {
+      showToast('Failed to record transaction', 'error');
+    }
   };
 
   /**
@@ -86,13 +109,18 @@ export default function DashboardLayout() {
    * @param {string} accountId - Identifier of target account.
    * @param {Object} newBudget - Updated budget metrics object.
    */
-  const handleSaveBudget = (accountId, newBudget) => {
-    setAccounts((prev) =>
-      prev.map((acc) =>
-        acc.id === accountId ? { ...acc, budget: newBudget } : acc,
-      ),
-    );
-    showToast('Budget settings updated', 'success');
+  const handleSaveBudget = async (accountId, newBudget) => {
+    try {
+      await updateAccountBudget(accountId, newBudget);
+      setAccounts((prev) =>
+        prev.map((acc) =>
+          acc.id === accountId ? { ...acc, budget: newBudget } : acc,
+        ),
+      );
+      showToast('Budget settings updated', 'success');
+    } catch {
+      showToast('Failed to update budget', 'error');
+    }
   };
 
   /** Adds a newly created account to application state and selects it */
@@ -132,6 +160,17 @@ export default function DashboardLayout() {
   };
 
   // ── Render ──────────────────────────────────────────────────────────────
+
+  if (loading || !activeAccount) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-void-950 text-void-200">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-9 w-9 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+          <p className="text-xs font-medium text-void-400">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-void-950 font-sans text-void-200">
